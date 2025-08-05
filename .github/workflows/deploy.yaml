@@ -13,12 +13,12 @@ jobs:
 
     - name: Checkout source code
       uses: actions/checkout@v4
-      
+
     - name: Build the Docker image
       run: docker build -t eggop92/docker-frontend --file Dockerfile.dev .
 
     - name: Test the docker image
-      run: docker run eggop92/docker-frontend npm test -- --coverage
+      run: docker run eggop92/docker-frontend npm test
     
 
   deploy:
