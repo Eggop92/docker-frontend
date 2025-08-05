@@ -18,15 +18,23 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - id: deploy
-        uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.2
-        with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_default_region: eu-north-1
-          tf_state_bucket: elasticbeanstalk-eu-north-1-680773430391
 
-          aws_elb_app_port: 8080 # This should match the docker exposed port. Defaults to 3000.
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*'
+
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v22
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: frontend
+        environment_name: Frontend-env
+        version_label: 12345
+        region: eu-north-1
+        deployment_package: deploy.zip
     # steps:
     #   - name: Elastic Beanstalk Deployer
     #   # You may pin to the exact commit or the version.
